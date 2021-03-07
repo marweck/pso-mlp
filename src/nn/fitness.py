@@ -1,0 +1,2 @@
+class MlpFitness:
+    pass
