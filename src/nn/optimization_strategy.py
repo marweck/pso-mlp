@@ -1,8 +1,8 @@
-from typing import Callable
+from typing import Callable, Dict
 
 import numpy as np
 
-from pso.multi_swarm import OptimizationStrategy
+from pso.multi_swarm import OptimizationStrategy, MultiParticle
 from pso.swarm import Swarm, SwarmConfig
 
 
@@ -31,6 +31,7 @@ class MlpStrategy(OptimizationStrategy):
         # creates MLP evaluator function using training dataset
         pass
 
-    def evaluate_outer_swarm(self, position_matrix: np.ndarray) -> np.ndarray:
+    def outer_swarm_evaluator(self, best_positions: Dict[int, MultiParticle]) -> \
+            Callable[[int, np.ndarray], float]:
         # MLP evaluator using validation dataset
         pass

@@ -44,7 +44,8 @@ class OptimizationStrategy:
         """
         pass
 
-    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> Callable[[int, np.ndarray], float]:
+    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) \
+            -> Callable[[int, np.ndarray], float]:
         """
         Receives a particle position from the outer swarm and creates a fitness function to be used on the inner PSO
 
@@ -53,7 +54,8 @@ class OptimizationStrategy:
         """
         pass
 
-    def outer_swarm_evaluator(self, best_positions: Dict[int, MultiParticle]) -> Callable[[int, np.ndarray], float]:
+    def outer_swarm_evaluator(self, best_positions: Dict[int, MultiParticle]) \
+            -> Callable[[int, np.ndarray], float]:
         """
         Fitness function for the outer PSO
 
