@@ -7,8 +7,16 @@ from pso.swarm import Swarm, SwarmConfig
 
 
 class MlpStrategy(OptimizationStrategy):
-    def __init__(self, number_of_outer_particles: int, inner_swarm_config: SwarmConfig):
+    def __init__(self, inner_swarm_config: SwarmConfig,
+                 x_training: np.ndarray,
+                 y_training: np.ndarray,
+                 x_validation: np.ndarray,
+                 y_validation: np.ndarray):
         self.__inner_config = inner_swarm_config
+        self.x_training = x_training
+        self.y_training = y_training
+        self.x_validation = x_validation
+        self.y_validation = y_validation
 
     def best_inner_position_for_outer_particle(self, index: int, outer_position: np.ndarray,
                                                best_so_far_inner_position: np.ndarray) -> np.ndarray:
@@ -18,7 +26,8 @@ class MlpStrategy(OptimizationStrategy):
     def create_inner_swarm(self, outer_position: np.ndarray) -> Swarm:
         return Swarm(self.__inner_config)
 
-    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
+    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> \
+            Callable[[int, np.ndarray], np.ndarray]:
         # creates MLP evaluator function using training dataset
         pass
 

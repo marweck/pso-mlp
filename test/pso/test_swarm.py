@@ -72,8 +72,8 @@ class Fitness:
     def __init__(self, solution: np.ndarray):
         self.__solution = solution
 
-    def evaluate(self, position_matrix: np.ndarray) -> np.ndarray:
-        return np.apply_along_axis(self.__distance, 1, position_matrix)
+    def evaluate(self, index: int, position: np.ndarray) -> float:
+        return self.__distance(position)
 
     def __distance(self, row):
         """

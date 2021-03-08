@@ -1,10 +1,10 @@
 import unittest
-from typing import Callable
+from typing import Callable, Dict
 
 import numpy as np
 import sys
 
-from pso.multi_swarm import MultiSwarm, OptimizationStrategy
+from pso.multi_swarm import MultiSwarm, OptimizationStrategy, MultiParticle
 from pso.swarm import Swarm, SwarmConfig
 
 
@@ -58,14 +58,16 @@ class SimpleStrategy(OptimizationStrategy):
         config = SwarmConfig(number_of_particles=15, size=12, lower_bound=-1, upper_bound=1)
         return Swarm(config)
 
-    def evaluate_outer_swarm(self, position_matrix: np.ndarray) -> np.ndarray:
-        return np.apply_along_axis(self.__outer_distance, 1, position_matrix)
+    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) \
+            -> Callable[[int, np.ndarray], float]:
+        return lambda index, row: self.__inner_distance(row)
 
-    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
-        return lambda matrix: np.apply_along_axis(self.__inner_distance, 1, matrix)
-
-    def __outer_distance(self, row):
-        return np.linalg.norm(self.__target - row)
+    def outer_swarm_evaluator(self, best_positions: Dict[int, MultiParticle]) \
+            -> Callable[[int, np.ndarray], float]:
+        return lambda index, row: self.__outer_distance(row)
 
     def __inner_distance(self, row):
         return np.linalg.norm(self.__inner_target - row)
+
+    def __outer_distance(self, row):
+        return np.linalg.norm(self.__target - row)

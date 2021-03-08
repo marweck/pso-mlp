@@ -1,9 +1,16 @@
 import sys
-from typing import Callable
+from typing import Callable, Dict
 
 import numpy as np
 
 from pso.swarm import Swarm, SwarmConfig
+
+
+class MultiParticle:
+    def __init__(self, fitness: float, inner_position: np.ndarray, outer_position: np.ndarray):
+        self.fitness = fitness
+        self.inner_position = inner_position
+        self.outer_position = outer_position
 
 
 class OptimizationStrategy:
@@ -37,21 +44,21 @@ class OptimizationStrategy:
         """
         pass
 
-    def evaluate_outer_swarm(self, position_matrix: np.ndarray) -> np.ndarray:
-        """
-        Fitness function for the outer PSO
-
-        :param position_matrix: current position of all outer particles
-        :return: vector of fitness values for each outer particle position
-        """
-        pass
-
-    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
+    def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> Callable[[int, np.ndarray], float]:
         """
         Receives a particle position from the outer swarm and creates a fitness function to be used on the inner PSO
 
         :param outer_swarm_position_i: particle i position to be used on inner PSO
         :return: fitness function to be used on inner PSO
+        """
+        pass
+
+    def outer_swarm_evaluator(self, best_positions: Dict[int, MultiParticle]) -> Callable[[int, np.ndarray], float]:
+        """
+        Fitness function for the outer PSO
+
+        :param best_positions: dictionary of MultiParticle by outer particle index
+        :return: vector of fitness values for each outer particle position
         """
         pass
 
@@ -62,12 +69,12 @@ class MultiSwarm:
         self.__strategy = strategy
         self.__number_of_particles = outer_swarm_config.number_of_particles
         self.__main_swarm = Swarm(outer_swarm_config)
-        self.__best_inner_position_map = {
-            i: {
-                'fitness': sys.maxsize,
-                'position': np.zeros(1),
-                'outer_position': None
-            } for i in range(self.__number_of_particles)
+
+        self.__best_inner_position_map: Dict[int, MultiParticle] = {
+            i: MultiParticle(fitness=sys.maxsize,
+                             inner_position=np.zeros(1),
+                             outer_position=self.__main_swarm.particle_position(i))
+            for i in range(self.__number_of_particles)
         }
 
     def fly(self, iterations: int, inner_iterations: int):
@@ -83,7 +90,7 @@ class MultiSwarm:
             evaluator = self.__strategy.inner_swarm_evaluator(position_i)
 
             best_position_so_far = self.__strategy.best_inner_position_for_outer_particle(
-                i, position_i, self.__best_inner_position_map[i]['position']
+                i, position_i, self.__best_inner_position_map[i].inner_position
             )
             inner_swarm.add_particle(best_position_so_far)
 
@@ -94,17 +101,16 @@ class MultiSwarm:
             )
 
     def __fly_outer_swarm(self):
-        self.__main_swarm.fly(1, self.__strategy.evaluate_outer_swarm)
+        outer_evaluator = self.__strategy.outer_swarm_evaluator(self.__best_inner_position_map)
+        self.__main_swarm.fly(1, outer_evaluator)
 
     def __record_best_inner_position(self, outer_index: int, outer_position: np.ndarray,
                                      best_fitness: np.float64, best_inner_position: np.ndarray):
 
-        if best_fitness < self.__best_inner_position_map[outer_index]['fitness']:
-            self.__best_inner_position_map[outer_index] = {
-                'fitness': best_fitness,
-                'position': best_inner_position,
-                'outer_position': outer_position
-            }
+        if best_fitness < self.__best_inner_position_map[outer_index].fitness:
+            self.__best_inner_position_map[outer_index].fitness = best_fitness
+            self.__best_inner_position_map[outer_index].inner_position = best_inner_position
+            self.__best_inner_position_map[outer_index].outer_position = outer_position
 
     def best_outer_position(self) -> np.ndarray:
         return self.__main_swarm.best_position()
@@ -114,4 +120,4 @@ class MultiSwarm:
 
     def best_inner_position(self) -> np.ndarray:
         index = self.__main_swarm.best_particle_index()
-        return self.__best_inner_position_map[index]['position']
+        return self.__best_inner_position_map[index].inner_position

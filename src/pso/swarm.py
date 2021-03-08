@@ -39,13 +39,16 @@ class Swarm:
         self.__best_position = np.zeros((config.number_of_particles, config.particle_size))
         self.__best_fitness = np.repeat(float(sys.maxsize), config.number_of_particles)
 
-    def fly(self, iterations: int, evaluate_swarm: Callable[[np.ndarray], np.ndarray]):
+    def fly(self, iterations: int, evaluate_swarm: Callable[[int, np.ndarray], float]):
         for i in range(iterations):
             self.__calculate_bests(evaluate_swarm)
             self.__update_swarm()
 
-    def __calculate_bests(self, evaluate_swarm: Callable[[np.ndarray], np.ndarray]):
-        fitness = evaluate_swarm(self.__swarm_position)
+    def __calculate_bests(self, evaluate_swarm: Callable[[int, np.ndarray], float]):
+        fitness_list = []
+        for i in range(self.__swarm_config.number_of_particles):
+            fitness_list.append(evaluate_swarm(i, self.__swarm_position[i]))
+        fitness = np.asarray(fitness_list)
 
         for i in range(self.__swarm_config.number_of_particles):
             if fitness[i] < self.__best_fitness[i]:
