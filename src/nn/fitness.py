@@ -5,6 +5,7 @@ from nn.mlp import MLP
 
 
 class MlpFitness:
+
     def __init__(self, mlp: MLP, x_input: np.ndarray, y_output: np.ndarray):
         self.mlp = mlp
         self.x_input = np.atleast_2d(x_input)

@@ -45,10 +45,7 @@ class Swarm:
             self.__update_swarm()
 
     def __calculate_bests(self, evaluate_swarm: Callable[[int, np.ndarray], float]):
-        fitness_list = []
-        for i in range(self.__swarm_config.number_of_particles):
-            fitness_list.append(evaluate_swarm(i, self.__swarm_position[i]))
-        fitness = np.asarray(fitness_list)
+        fitness = self.__current_fitness(evaluate_swarm)
 
         for i in range(self.__swarm_config.number_of_particles):
             if fitness[i] < self.__best_fitness[i]:
@@ -57,6 +54,12 @@ class Swarm:
 
                 if fitness[i] < self.best_swarm_fitness():
                     self.__best_particle_index = i
+
+    def __current_fitness(self, evaluate_swarm: Callable[[int, np.ndarray], float]) -> np.ndarray:
+        fitness_list = []
+        for i in range(self.__swarm_config.number_of_particles):
+            fitness_list.append(evaluate_swarm(i, self.__swarm_position[i]))
+        return np.asarray(fitness_list)
 
     def __update_swarm(self):
         r1 = np.random.uniform(size=(self.__swarm_config.number_of_particles, self.__swarm_config.particle_size))
@@ -105,3 +108,6 @@ class Swarm:
 
     def best_particle_index(self) -> int:
         return self.__best_particle_index
+
+    def config(self) -> SwarmConfig:
+        return self.__swarm_config

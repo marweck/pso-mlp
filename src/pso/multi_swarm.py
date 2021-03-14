@@ -29,7 +29,7 @@ class OptimizationStrategy:
         pass
 
     def best_inner_position_for_outer_particle(self, index: int, outer_position: np.ndarray,
-                                               best_so_far_inner_position: np.ndarray) -> np.ndarray:
+                                               best_so_far: MultiParticle) -> np.ndarray:
         """
         Returns the best inner position for outer particle "index". This position keeps track of the best
         inner position visited so far in an outer PSO round. Its dimension should vary overtime to reflect
@@ -38,7 +38,7 @@ class OptimizationStrategy:
         This particle position will be passed over to the next round of the inner PSO
         :param index: outer position index
         :param outer_position: current outer particle index position vector
-        :param best_so_far_inner_position: best know position for an inner swarm for outer particle index
+        :param best_so_far: best known MultiParticle position from an inner swarm for outer particle 'index'
         :return: best inner position recorded for outer particle index adapted to current outer particle
                  position
         """
@@ -92,7 +92,7 @@ class MultiSwarm:
             evaluator = self.__strategy.inner_swarm_evaluator(position_i)
 
             best_position_so_far = self.__strategy.best_inner_position_for_outer_particle(
-                i, position_i, self.__best_inner_position_map[i].inner_position
+                i, position_i, self.__best_inner_position_map[i]
             )
             inner_swarm.add_particle(best_position_so_far)
 

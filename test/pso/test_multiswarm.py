@@ -47,12 +47,12 @@ class SimpleStrategy(OptimizationStrategy):
         self.__inner_target = np.random.uniform(size=12, low=-1, high=1)
 
     def best_inner_position_for_outer_particle(self, index: int, outer_position: np.ndarray,
-                                               best_so_far_inner_position: np.ndarray) -> np.ndarray:
+                                               best_so_far: MultiParticle) -> np.ndarray:
         print('index: ', index)
         print('outer position: ', outer_position)
-        if len(best_so_far_inner_position) < 12:
+        if len(best_so_far.inner_position) < 12:
             return np.zeros(12)
-        return best_so_far_inner_position
+        return best_so_far.inner_position
 
     def create_inner_swarm(self, outer_position: np.ndarray) -> Swarm:
         config = SwarmConfig(number_of_particles=15, size=12, lower_bound=-1, upper_bound=1)
