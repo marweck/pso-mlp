@@ -55,3 +55,25 @@ class MLPTestCase(unittest.TestCase):
         self.assertEqual(layers[0].shape, (6, 6))
         self.assertEqual(layers[1].shape, (4, 7))
         self.assertEqual(layers[2].shape, (2, 5))
+
+    def test_get_weights(self):
+        shape = (4, 5, 2)
+        weights = np.random.uniform(size=37)
+        mlp = MLP(shape, weights)
+
+        mlp_weights = mlp.weights()
+
+        self.assertTrue(np.all(mlp_weights == weights))
+
+    def test_mlp_resize_preconditions(self):
+        shape = (4, 5, 2)
+        mlp = MLP(shape)
+
+        with self.assertRaises(ValueError):
+            mlp.resize((4, 5, 4, 2))
+
+        with self.assertRaises(ValueError):
+            mlp.resize((5, 5, 2))
+
+        with self.assertRaises(ValueError):
+            mlp.resize((4, 5, 3))
