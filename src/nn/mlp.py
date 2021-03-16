@@ -35,7 +35,7 @@ class MLP:
             raise ValueError('New shape must have the same number of inputs and outputs')
 
         for i in range(self.__number_of_layers):
-            self.__layers[i] = resize_matrix(self.__layers[i], (new_shape[i + 1], new_shape[i] + 1))
+            self.__layers[i] = resize_2d_matrix(self.__layers[i], (new_shape[i + 1], new_shape[i] + 1))
 
     def weights(self) -> np.ndarray:
         weights = np.asarray([])
@@ -80,7 +80,10 @@ def mlp_shape_dimension(shape: Tuple[int, ...]) -> int:
     return np.sum([shape[i + 1] * (shape[i] + 1) for i in range(len(shape) - 1)])
 
 
-def resize_matrix(matrix: np.ndarray, new_shape: Tuple[int, ...]) -> np.ndarray:
+def resize_2d_matrix(matrix: np.ndarray, new_shape: Tuple[int, ...]) -> np.ndarray:
+    if len(matrix.shape) != 2:
+        raise ValueError('Matrix should be a 2d matrix')
+
     shape = matrix.shape
 
     diff_rows = new_shape[0] - shape[0]
@@ -93,7 +96,7 @@ def resize_matrix(matrix: np.ndarray, new_shape: Tuple[int, ...]) -> np.ndarray:
 
     if diff_cols > 0:
         matrix = np.column_stack((matrix, np.random.uniform(size=(new_shape[0], diff_cols))))
-    elif diff_rows < 0:
+    elif diff_cols < 0:
         matrix = matrix[:, :diff_cols]
 
     return matrix
