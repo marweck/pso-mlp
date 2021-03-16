@@ -54,3 +54,12 @@ class MlpStrategyTestCase(unittest.TestCase):
         self.assertEqual(swarm.config().lower_bound, swarm_config.lower_bound)
         self.assertEqual(swarm.config().number_of_particles, swarm_config.number_of_particles)
         self.assertEqual(swarm.config().particle_size, dimension)
+
+    def test_best_inner_position_for_outer_particle(self):
+        pass  # TODO test best inner position transformation
+
+    def test_inner_swarm_evaluator(self):
+        pass  # TODO test inner swarm evaluator factory
+
+    def test_outer_swarm_evaluator(self):
+        pass  # TODO test outer swarm evaluator factory
