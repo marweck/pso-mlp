@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from nn.mlp import mlp_shape_dimension, weights_to_layers, create_mlp_layers, MLP
+from nn.mlp import mlp_shape_dimension, weights_to_layers, create_mlp_layers, MLP, resize_matrix
 
 
 class MLPTestCase(unittest.TestCase):
@@ -77,3 +77,17 @@ class MLPTestCase(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             mlp.resize((4, 5, 3))
+
+    def test_matrix_resize(self):
+        matrix = np.random.uniform(size=(5, 4))
+        same_matrix = resize_matrix(matrix, (5, 4))
+        self.assertIs(matrix, same_matrix)
+
+        smaller = resize_matrix(matrix, (4, 3))
+        self.assertEqual(smaller.shape, (4, 3))
+
+        bigger = resize_matrix(matrix, (6, 7))
+        self.assertEqual(bigger.shape, (6, 7))
+
+        mixed = resize_matrix(matrix, (4, 7))
+        self.assertEqual(mixed.shape, (4, 7))

@@ -1,6 +1,6 @@
 from typing import Tuple, List
-
 import numpy as np
+
 from scipy import special
 
 
@@ -33,6 +33,9 @@ class MLP:
         if new_shape[0] != self.__shape[0] or \
                 new_shape[self.__number_of_layers] != self.__shape[self.__number_of_layers]:
             raise ValueError('New shape must have the same number of inputs and outputs')
+
+        for i in range(self.__number_of_layers):
+            self.__layers[i] = resize_matrix(self.__layers[i], (new_shape[i + 1], new_shape[i] + 1))
 
     def weights(self) -> np.ndarray:
         weights = np.asarray([])
@@ -75,3 +78,25 @@ def weights_to_layers(shape: Tuple[int, ...], weights: np.ndarray) -> List[np.nd
 
 def mlp_shape_dimension(shape: Tuple[int, ...]) -> int:
     return np.sum([shape[i + 1] * (shape[i] + 1) for i in range(len(shape) - 1)])
+
+
+def resize_matrix(matrix: np.ndarray, new_shape: Tuple[int, ...]) -> np.ndarray:
+    shape = matrix.shape
+
+    diff_rows = new_shape[0] - shape[0]
+    diff_cols = new_shape[1] - shape[1]
+
+    if diff_rows > 0:
+        matrix = np.row_stack((matrix, np.random.uniform(size=(diff_rows, shape[1]))))
+    elif diff_rows < 0:
+        matrix = matrix[:diff_rows, :]
+
+    if diff_cols > 0:
+        matrix = np.column_stack((matrix, np.random.uniform(size=(new_shape[0], diff_cols))))
+    elif diff_rows < 0:
+        matrix = matrix[:, :diff_cols]
+
+    return matrix
+
+    return matrix
+
