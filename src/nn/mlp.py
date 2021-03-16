@@ -100,6 +100,3 @@ def resize_2d_matrix(matrix: np.ndarray, new_shape: Tuple[int, ...]) -> np.ndarr
         matrix = matrix[:, :diff_cols]
 
     return matrix
-
-    return matrix
-
