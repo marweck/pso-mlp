@@ -28,7 +28,7 @@ class MLP:
 
     def resize(self, new_shape: Tuple[int, ...]):
         if len(new_shape) != len(self.__shape):
-            raise ValueError('New shape must have {0} layers'.format(self.__shape))
+            raise ValueError('New shape must have {0} layers'.format(len(self.__shape)))
 
         if new_shape[0] != self.__shape[0] or \
                 new_shape[self.__number_of_layers] != self.__shape[self.__number_of_layers]:
