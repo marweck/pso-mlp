@@ -28,7 +28,7 @@ class OptimizationStrategy:
         """
         pass
 
-    def best_inner_position_for_outer_particle(self, index: int, outer_position: np.ndarray,
+    def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
         """
         Returns the best inner position for outer particle "index". This position keeps track of the best
@@ -36,7 +36,6 @@ class OptimizationStrategy:
         the changes from outer particle i position.
 
         This particle position will be passed over to the next round of the inner PSO
-        :param index: outer position index
         :param outer_position: current outer particle index position vector
         :param best_so_far: best known MultiParticle position from an inner swarm for outer particle 'index'
         :return: best inner position recorded for outer particle index adapted to current outer particle
@@ -47,7 +46,8 @@ class OptimizationStrategy:
     def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) \
             -> Callable[[int, np.ndarray], float]:
         """
-        Receives a particle position from the outer swarm and creates a fitness function to be used on the inner PSO
+        Receives a particle position from the outer swarm and creates a fitness function to be used on the
+        inner PSO
 
         :param outer_swarm_position_i: particle i position to be used on inner PSO
         :return: fitness function to be used on inner PSO
@@ -92,7 +92,7 @@ class MultiSwarm:
             evaluator = self.__strategy.inner_swarm_evaluator(position_i)
 
             best_position_so_far = self.__strategy.best_inner_position_for_outer_particle(
-                i, position_i, self.__best_inner_position_map[i]
+                position_i, self.__best_inner_position_map[i]
             )
             inner_swarm.add_particle(best_position_so_far)
 
@@ -123,3 +123,7 @@ class MultiSwarm:
     def best_inner_position(self) -> np.ndarray:
         index = self.__main_swarm.best_particle_index()
         return self.__best_inner_position_map[index].inner_position
+
+    def best_multi_particle(self) -> MultiParticle:
+        index = self.__main_swarm.best_particle_index()
+        return self.__best_inner_position_map[index]

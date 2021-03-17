@@ -47,7 +47,7 @@ class MlpStrategyTestCase(unittest.TestCase):
             y_validation=y_validation,
         )
 
-        dimension = mlp_shape_dimension((7, 3, 6, 2))
+        dimension = mlp_shape_dimension((7, 3, 5, 2))
 
         swarm = strategy.create_inner_swarm(np.asarray([3.4, 5.6]))
         self.assertEqual(swarm.config().upper_bound, swarm_config.upper_bound)

@@ -46,9 +46,8 @@ class SimpleStrategy(OptimizationStrategy):
         self.__target = np.random.uniform(size=6, low=1, high=5)
         self.__inner_target = np.random.uniform(size=12, low=-1, high=1)
 
-    def best_inner_position_for_outer_particle(self, index: int, outer_position: np.ndarray,
+    def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
-        print('index: ', index)
         print('outer position: ', outer_position)
         if len(best_so_far.inner_position) < 12:
             return np.zeros(12)
