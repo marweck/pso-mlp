@@ -18,7 +18,8 @@ class MultiSwarmTestCase(unittest.TestCase):
         self.assertTrue(multi_swarm.best_outer_fitness() == sys.maxsize)
         self.assertTrue(np.all(multi_swarm.best_outer_position() >= 1))
         self.assertTrue(np.all(multi_swarm.best_outer_position() <= 5))
-        self.assertTrue(np.all(multi_swarm.best_inner_position() == 0.))
+        self.assertTrue(np.all(multi_swarm.best_inner_position() > -1))
+        self.assertTrue(np.all(multi_swarm.best_inner_position() <= 1))
 
     def test_multi_swarm_convergence(self):
         strategy = SimpleStrategy()
@@ -46,11 +47,11 @@ class SimpleStrategy(OptimizationStrategy):
         self.__target = np.random.uniform(size=6, low=1, high=5)
         self.__inner_target = np.random.uniform(size=12, low=-1, high=1)
 
+    def initial_inner_position_for_outer_position(self, outer_position: np.ndarray) -> np.ndarray:
+        return np.random.uniform(size=12, low=-1, high=1)
+
     def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
-        print('outer position: ', outer_position)
-        if len(best_so_far.inner_position) < 12:
-            return np.zeros(12)
         return best_so_far.inner_position
 
     def create_inner_swarm(self, outer_position: np.ndarray) -> Swarm:

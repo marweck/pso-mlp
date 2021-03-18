@@ -28,6 +28,13 @@ class OptimizationStrategy:
         """
         pass
 
+    def initial_inner_position_for_outer_position(self, outer_position: np.ndarray) -> np.ndarray:
+        """
+        Determines the initial position of an inner particle based on an outer particle position
+        :param outer_position:
+        """
+        pass
+
     def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
         """
@@ -66,16 +73,19 @@ class OptimizationStrategy:
 
 
 class MultiSwarm:
-    def __init__(self, outer_swarm_config: SwarmConfig,
-                 strategy: OptimizationStrategy):
+    def __init__(self, outer_swarm_config: SwarmConfig, strategy: OptimizationStrategy):
         self.__strategy = strategy
         self.__number_of_particles = outer_swarm_config.number_of_particles
         self.__main_swarm = Swarm(outer_swarm_config)
 
         self.__best_inner_position_map: Dict[int, MultiParticle] = {
-            i: MultiParticle(fitness=sys.maxsize,
-                             inner_position=np.zeros(1),
-                             outer_position=self.__main_swarm.particle_position(i))
+            i: MultiParticle(
+                fitness=sys.maxsize,
+                inner_position=strategy.initial_inner_position_for_outer_position(
+                    self.__main_swarm.particle_position(i)
+                ),
+                outer_position=self.__main_swarm.particle_position(i)
+            )
             for i in range(self.__number_of_particles)
         }
 
