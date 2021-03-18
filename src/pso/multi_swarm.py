@@ -117,17 +117,19 @@ class MultiSwarm:
         self.__main_swarm.fly(1, outer_evaluator)
 
     def __record_best_inner_position(self, outer_index: int, outer_position: np.ndarray,
-                                     best_fitness: np.float64, best_inner_position: np.ndarray):
+                                     best_fitness: float, best_inner_position: np.ndarray):
 
         if best_fitness < self.__best_inner_position_map[outer_index].fitness:
-            self.__best_inner_position_map[outer_index].fitness = best_fitness
-            self.__best_inner_position_map[outer_index].inner_position = best_inner_position
-            self.__best_inner_position_map[outer_index].outer_position = outer_position
+            self.__best_inner_position_map[outer_index] = MultiParticle(
+                fitness=best_fitness,
+                inner_position=best_inner_position,
+                outer_position=outer_position
+            )
 
     def best_outer_position(self) -> np.ndarray:
         return self.__main_swarm.best_position()
 
-    def best_outer_fitness(self) -> np.float64:
+    def best_outer_fitness(self) -> float:
         return self.__main_swarm.best_swarm_fitness()
 
     def best_inner_position(self) -> np.ndarray:

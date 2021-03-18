@@ -100,7 +100,7 @@ class Swarm:
     def particle_position(self, particle_index: int) -> np.ndarray:
         return self.__swarm_position[particle_index]
 
-    def best_swarm_fitness(self) -> np.float64:
+    def best_swarm_fitness(self) -> float:
         return self.__best_fitness[self.__best_particle_index]
 
     def best_position(self) -> np.ndarray:
