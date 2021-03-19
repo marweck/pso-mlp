@@ -30,7 +30,9 @@ class MlpStrategy(OptimizationStrategy):
 
     def initial_inner_position_for_outer_position(self, outer_position: np.ndarray) -> np.ndarray:
         number_of_weights = self.__inner_swarm_dimension_for_outer_particle(outer_position)
-        return np.random.uniform(size=number_of_weights)
+        return np.random.uniform(size=number_of_weights,
+                                 low=self.inner_config.lower_bound,
+                                 high=self.inner_config.upper_bound)
 
     def __inner_swarm_dimension_for_outer_particle(self, outer_position: np.ndarray) -> int:
         shape = self.__shape_from_outer_position(outer_position)
@@ -39,7 +41,7 @@ class MlpStrategy(OptimizationStrategy):
     def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
         shape = self.__shape_from_outer_position(best_so_far.outer_position)
-        weights = best_so_far.inner_position
+        weights = best_so_far.inner_position.copy()
         mlp = MLP(shape=shape, weights=weights)
 
         # resize mlp to the shape of outer_position

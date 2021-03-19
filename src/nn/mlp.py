@@ -57,7 +57,7 @@ def create_mlp_layers(shape: Tuple[int, ...]) -> List[np.ndarray]:
 
 def weights_to_layers(shape: Tuple[int, ...], weights: np.ndarray) -> List[np.ndarray]:
     dimension = mlp_shape_dimension(shape)
-    weights_dimension = len(weights)
+    weights_dimension = weights.size
     if weights_dimension != dimension:
         raise ValueError('The weights vector for shape {} should have length {}, but has length {}'
                          .format(shape, dimension, weights_dimension))
