@@ -35,17 +35,17 @@ class MlpStrategy(OptimizationStrategy):
                                  high=self.inner_config.upper_bound)
 
     def __inner_swarm_dimension_for_outer_particle(self, outer_position: np.ndarray) -> int:
-        shape = self.__shape_from_outer_position(outer_position)
+        shape = shape_from_outer_position(outer_position, self.number_of_inputs, self.number_of_outputs)
         return mlp_shape_dimension(shape)
 
     def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
-        shape = self.__shape_from_outer_position(best_so_far.outer_position)
+        shape = shape_from_outer_position(best_so_far.outer_position, self.number_of_inputs, self.number_of_outputs)
         weights = best_so_far.inner_position.copy()
         mlp = MLP(shape=shape, weights=weights)
 
         # resize mlp to the shape of outer_position
-        new_shape = self.__shape_from_outer_position(outer_position)
+        new_shape = shape_from_outer_position(outer_position, self.number_of_inputs, self.number_of_outputs)
         mlp.resize(new_shape)
 
         return mlp.weights()
@@ -65,7 +65,7 @@ class MlpStrategy(OptimizationStrategy):
         """
         Creates MLP evaluator function using training dataset
         """
-        shape = self.__shape_from_outer_position(outer_swarm_position_i)
+        shape = shape_from_outer_position(outer_swarm_position_i, self.number_of_inputs, self.number_of_outputs)
 
         def evaluate(index: int, position_i: np.ndarray) -> float:
             mlp = MLP(shape=shape, weights=position_i)
@@ -80,13 +80,14 @@ class MlpStrategy(OptimizationStrategy):
         Creates MLP evaluator function using validation dataset
         """
         def evaluate(index: int, position_i: np.ndarray) -> float:
-            shape = self.__shape_from_outer_position(best_positions[index].outer_position)
+            shape = shape_from_outer_position(best_positions[index].outer_position,
+                                              self.number_of_inputs, self.number_of_outputs)
             weights = best_positions[index].inner_position
 
             mlp = MLP(shape=shape, weights=weights)
 
             # resize mlp to new shape
-            new_shape = self.__shape_from_outer_position(position_i)
+            new_shape = shape_from_outer_position(position_i, self.number_of_inputs, self.number_of_outputs)
             mlp.resize(new_shape)
 
             fitness = MlpFitness(mlp, x_input=self.x_validation, y_output=self.y_validation)
@@ -94,8 +95,11 @@ class MlpStrategy(OptimizationStrategy):
 
         return evaluate
 
-    def __shape_from_outer_position(self, outer_position: np.ndarray) -> Tuple[int, ...]:
-        shape = [int(x) for x in outer_position]
-        shape.insert(0, self.number_of_inputs)
-        shape.append(self.number_of_outputs)
-        return tuple(shape)
+
+def shape_from_outer_position(outer_position: np.ndarray,
+                              number_of_inputs: int,
+                              number_of_outputs: int) -> Tuple[int, ...]:
+    shape = [int(x) for x in outer_position]
+    shape.insert(0, number_of_inputs)
+    shape.append(number_of_outputs)
+    return tuple(shape)
