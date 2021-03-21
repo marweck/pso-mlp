@@ -77,6 +77,7 @@ class MultiSwarm:
         self.__strategy = strategy
         self.__number_of_particles = outer_swarm_config.number_of_particles
         self.__main_swarm = Swarm(outer_swarm_config)
+        self.__inner_progress = []
 
         self.__best_inner_position_map: Dict[int, MultiParticle] = {
             i: MultiParticle(
@@ -126,6 +127,7 @@ class MultiSwarm:
             outer_position=outer_position,
             inner_position=best_inner_position,
         )
+        self.__inner_progress.append(best_fitness)
 
     def __update_best_inner_positions(self):
         for i in range(self.__number_of_particles):
@@ -148,3 +150,9 @@ class MultiSwarm:
     def best_multi_particle(self) -> MultiParticle:
         index = self.__main_swarm.best_particle_index()
         return self.__best_inner_position_map[index]
+
+    def inner_swarm_fitness_progress(self):
+        return self.__inner_progress
+
+    def outer_swarm_fitness_progress(self):
+        return self.__main_swarm.fitness_progress()

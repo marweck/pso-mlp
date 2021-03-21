@@ -6,6 +6,7 @@ from nn.mlp import mlp_shape_dimension
 from nn.optimization_strategy import MlpStrategy
 from pso.multi_swarm import MultiSwarm
 from pso.swarm import SwarmConfig
+from util.plotting import plot_fitness
 
 
 class MlpStrategyTestCase(unittest.TestCase):
@@ -77,6 +78,11 @@ class MlpStrategyTestCase(unittest.TestCase):
         swarm = MultiSwarm(outer_config, strategy)
 
         swarm.fly(5, 10)
+
+        # plot_fitness(
+        #     inner_swarm_fitness_progress=swarm.inner_swarm_fitness_progress(),
+        #     outer_swarm_fitness_progress=swarm.outer_swarm_fitness_progress()
+        # )
 
         self.assertTrue(swarm.best_outer_fitness() > 0)
 

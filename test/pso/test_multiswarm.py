@@ -6,6 +6,7 @@ import sys
 
 from pso.multi_swarm import MultiSwarm, OptimizationStrategy, MultiParticle
 from pso.swarm import Swarm, SwarmConfig
+from util.plotting import plot_fitness
 
 
 class MultiSwarmTestCase(unittest.TestCase):
@@ -35,6 +36,11 @@ class MultiSwarmTestCase(unittest.TestCase):
 
             self.assertTrue(best_swarm_fitness <= previous_best)
             previous_best = best_swarm_fitness
+
+        # plot_fitness(
+        #     inner_swarm_fitness_progress=multi_swarm.inner_swarm_fitness_progress(),
+        #     outer_swarm_fitness_progress=multi_swarm.outer_swarm_fitness_progress()
+        # )
 
         self.assertTrue(np.all(multi_swarm.best_outer_position() >= 1))
         self.assertTrue(np.all(multi_swarm.best_outer_position() <= 5))

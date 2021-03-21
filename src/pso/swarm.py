@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List
 
 import numpy as np
 import sys
@@ -38,11 +38,13 @@ class Swarm:
 
         self.__best_position = np.zeros((config.number_of_particles, config.particle_size))
         self.__best_fitness = np.repeat(float(sys.maxsize), config.number_of_particles)
+        self.__progress_track = []
 
     def fly(self, iterations: int, evaluate_swarm: Callable[[int, np.ndarray], float]):
         for i in range(iterations):
             self.__calculate_bests(evaluate_swarm)
             self.__update_swarm()
+            self.__save_progress()
 
     def __calculate_bests(self, evaluate_swarm: Callable[[int, np.ndarray], float]):
         fitness = self.__current_fitness(evaluate_swarm)
@@ -78,6 +80,9 @@ class Swarm:
                                                a_min=self.__swarm_config.lower_bound,
                                                a_max=self.__swarm_config.upper_bound)
 
+    def __save_progress(self):
+        self.__progress_track.append(self.best_swarm_fitness())
+
     def add_particle(self, particle: np.ndarray):
         if not np.all(self.__swarm_config.lower_bound <= particle) and \
                np.all(particle <= self.__swarm_config.upper_bound):
@@ -102,6 +107,9 @@ class Swarm:
 
     def best_swarm_fitness(self) -> float:
         return self.__best_fitness[self.__best_particle_index]
+
+    def fitness_progress(self) -> List[float]:
+        return self.__progress_track
 
     def best_position(self) -> np.ndarray:
         return self.__swarm_position[self.__best_particle_index]
