@@ -110,7 +110,7 @@ class MultiSwarm:
             inner_swarm.fly(inner_iterations, evaluator)
 
             self.__record_best_inner_position(
-                i, position_i.copy(), inner_swarm.best_swarm_fitness(), inner_swarm.best_position()
+                i, position_i, inner_swarm.best_swarm_fitness(), inner_swarm.best_position()
             )
 
     def __fly_outer_swarm(self):
@@ -124,8 +124,8 @@ class MultiSwarm:
         print('## best fitness for inner particle {} = {}'.format(outer_index, best_fitness))
         self.__best_inner_position_map[outer_index] = MultiParticle(
             fitness=best_fitness,
-            outer_position=outer_position,
-            inner_position=best_inner_position,
+            outer_position=outer_position.copy(),
+            inner_position=best_inner_position.copy(),
         )
         self.__inner_progress.append(best_fitness)
 
@@ -135,7 +135,7 @@ class MultiSwarm:
             best_position_so_far = self.__strategy.best_inner_position_for_outer_particle(
                 position_i, self.__best_inner_position_map[i]
             )
-            self.__best_inner_position_map[i].inner_position = best_position_so_far
+            self.__best_inner_position_map[i].inner_position = best_position_so_far.copy()
 
     def best_outer_position(self) -> np.ndarray:
         return self.__main_swarm.best_position()
@@ -146,6 +146,10 @@ class MultiSwarm:
     def best_inner_position(self) -> np.ndarray:
         index = self.__main_swarm.best_particle_index()
         return self.__best_inner_position_map[index].inner_position
+
+    def best_inner_fitness(self) -> float:
+        index = self.__main_swarm.best_particle_index()
+        return self.__best_inner_position_map[index].fitness
 
     def best_multi_particle(self) -> MultiParticle:
         index = self.__main_swarm.best_particle_index()

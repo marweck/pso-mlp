@@ -26,7 +26,6 @@ class SwarmTestCase(unittest.TestCase):
 
         solution = np.random.uniform(size=10)
         fitness = Fitness(solution)
-        print(solution)
         previous_best = sys.maxsize
 
         for i in range(10):
@@ -66,6 +65,26 @@ class SwarmTestCase(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             swarm.add_particle(np.zeros(6))
+
+    def test_convergence_between_generations(self):
+        config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
+        swarm = Swarm(config)
+
+        solution = np.random.uniform(size=10)
+        fitness = Fitness(solution)
+
+        swarm.fly(30, fitness.evaluate)
+        first_fitness = swarm.best_swarm_fitness()
+
+        second_generation_swarm = Swarm(config)
+        second_generation_swarm.add_particle(swarm.best_position())
+
+        second_generation_swarm.fly(30, fitness.evaluate)
+
+        second_fitness = second_generation_swarm.best_swarm_fitness()
+
+        print('first fitness: {}  second fitness: {}'.format(first_fitness, second_fitness))
+        self.assertTrue(second_fitness <= first_fitness)
 
 
 class Fitness:

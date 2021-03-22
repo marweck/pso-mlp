@@ -3,17 +3,14 @@ from typing import Callable, List
 import numpy as np
 import sys
 
+from util.random import random_position
+
 # constriction factor
 CHI = 0.7298437881283576
 
 # acceleration constants
 C1 = 2.05
 C2 = 2.05
-
-
-def random_position(number_of_particles: int, size: int,
-                    lower_bound: float, upper_bound: float) -> np.ndarray:
-    return np.random.uniform(size=(number_of_particles, size), low=lower_bound, high=upper_bound)
 
 
 class SwarmConfig:

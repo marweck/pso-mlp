@@ -4,7 +4,7 @@ import numpy as np
 
 from nn.mlp import mlp_shape_dimension
 from nn.optimization_strategy import MlpStrategy
-from pso.multi_swarm import MultiSwarm
+from pso.multi_swarm import MultiSwarm, MultiParticle
 from pso.swarm import SwarmConfig
 from util.plotting import plot_fitness
 
@@ -77,23 +77,64 @@ class MlpStrategyTestCase(unittest.TestCase):
 
         swarm = MultiSwarm(outer_config, strategy)
 
-        swarm.fly(5, 10)
+        swarm.fly(2, 10)
+        first_outer_fitness = swarm.best_outer_fitness()
+        first_inner_fitness = swarm.best_inner_fitness()
+
+        swarm.fly(3, 10)
+        second_outer_fitness = swarm.best_outer_fitness()
+        second_inner_fitness = swarm.best_inner_fitness()
+
+        self.assertTrue(second_outer_fitness <= first_outer_fitness)
+        self.assertTrue(second_inner_fitness <= first_inner_fitness)
 
         # plot_fitness(
         #     inner_swarm_fitness_progress=swarm.inner_swarm_fitness_progress(),
         #     outer_swarm_fitness_progress=swarm.outer_swarm_fitness_progress()
         # )
 
-        self.assertTrue(swarm.best_outer_fitness() > 0)
-
         print('Best architecture: [{}, {}, {}]'.format(7, swarm.best_outer_position(), 2))
         print('Best particle: ', swarm.best_inner_position())
+        print('Best outer fitness ', second_outer_fitness)
+        print('Best inner fitness ', second_inner_fitness)
+
+    def test_initial_inner_position_for_outer_position(self):
+        inner_config = SwarmConfig(number_of_particles=10, size=30, lower_bound=-0.5, upper_bound=0.5)
+        x_training = np.random.uniform(size=(20, 7))
+        y_training = np.random.uniform(size=(20, 2))
+        x_validation = np.random.uniform(size=(10, 7))
+        y_validation = np.random.uniform(size=(10, 2))
+
+        strategy = MlpStrategy(
+            inner_swarm_config=inner_config,
+            x_training=x_training,
+            y_training=y_training,
+            x_validation=x_validation,
+            y_validation=y_validation,
+        )
+
+        initial_position = strategy.initial_inner_position_for_outer_position(np.asarray([2, 3]))
+        self.assertEqual(len(initial_position), 33)
 
     def test_best_inner_position_for_outer_particle(self):
-        pass  # TODO test best inner position transformation
+        inner_config = SwarmConfig(number_of_particles=10, size=30, lower_bound=-0.5, upper_bound=0.5)
+        x_training = np.random.uniform(size=(20, 7))
+        y_training = np.random.uniform(size=(20, 2))
+        x_validation = np.random.uniform(size=(10, 7))
+        y_validation = np.random.uniform(size=(10, 2))
 
-    def test_inner_swarm_evaluator(self):
-        pass  # TODO test inner swarm evaluator factory
+        strategy = MlpStrategy(
+            inner_swarm_config=inner_config,
+            x_training=x_training,
+            y_training=y_training,
+            x_validation=x_validation,
+            y_validation=y_validation,
+        )
 
-    def test_outer_swarm_evaluator(self):
-        pass  # TODO test outer swarm evaluator factory
+        best_so_far = MultiParticle(fitness=0.5,
+                                    inner_position=np.random.uniform(size=33),
+                                    outer_position=np.asarray([2, 3]))
+        inner_position = strategy.best_inner_position_for_outer_particle(
+            np.asarray([4, 5]), best_so_far
+        )
+        self.assertEqual(len(inner_position), 69)

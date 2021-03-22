@@ -34,10 +34,6 @@ class MlpStrategy(OptimizationStrategy):
                                  low=self.inner_config.lower_bound,
                                  high=self.inner_config.upper_bound)
 
-    def __inner_swarm_dimension_for_outer_particle(self, outer_position: np.ndarray) -> int:
-        shape = shape_from_outer_position(outer_position, self.number_of_inputs, self.number_of_outputs)
-        return mlp_shape_dimension(shape)
-
     def best_inner_position_for_outer_particle(self, outer_position: np.ndarray,
                                                best_so_far: MultiParticle) -> np.ndarray:
         shape = shape_from_outer_position(best_so_far.outer_position, self.number_of_inputs, self.number_of_outputs)
@@ -94,6 +90,10 @@ class MlpStrategy(OptimizationStrategy):
             return fitness.evaluate()
 
         return evaluate
+
+    def __inner_swarm_dimension_for_outer_particle(self, outer_position: np.ndarray) -> int:
+        shape = shape_from_outer_position(outer_position, self.number_of_inputs, self.number_of_outputs)
+        return mlp_shape_dimension(shape)
 
 
 def shape_from_outer_position(outer_position: np.ndarray,
