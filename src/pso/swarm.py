@@ -80,7 +80,7 @@ class Swarm:
     def __save_progress(self):
         self.__progress_track.append(self.best_swarm_fitness())
 
-    def add_particle(self, particle: np.ndarray):
+    def add_best_particle(self, particle: np.ndarray, fitness: float = float(sys.maxsize)):
         if not np.all(self.__swarm_config.lower_bound <= particle) and \
                np.all(particle <= self.__swarm_config.upper_bound):
             raise ValueError(
@@ -88,15 +88,16 @@ class Swarm:
                 format(self.__swarm_config.lower_bound, self.__swarm_config.upper_bound)
             )
 
-        self.__swarm_position = np.vstack([self.__swarm_position, particle])
+        self.__swarm_position = np.vstack([self.__swarm_position, particle.copy()])
 
         speed = random_position(1, self.__swarm_config.particle_size, -self.__swarm_config.upper_bound,
                                 self.__swarm_config.upper_bound)
         self.__speed = np.vstack([self.__speed, speed])
 
-        self.__best_position = np.vstack([self.__best_position, np.zeros(self.__swarm_config.particle_size)])
-        self.__best_fitness = np.hstack([self.__best_fitness, float(sys.maxsize)])
+        self.__best_position = np.vstack([self.__best_position, particle.copy()])
+        self.__best_fitness = np.hstack([self.__best_fitness, fitness])
 
+        self.__best_particle_index = self.__swarm_config.number_of_particles
         self.__swarm_config.number_of_particles += 1
 
     def particle_position(self, particle_index: int) -> np.ndarray:

@@ -22,7 +22,6 @@ class SwarmTestCase(unittest.TestCase):
     def test_swarm_convergence(self):
         config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
         swarm = Swarm(config)
-        swarm.add_particle(np.random.uniform(size=10, low=-1, high=1))
 
         solution = np.random.uniform(size=10)
         fitness = Fitness(solution)
@@ -59,12 +58,13 @@ class SwarmTestCase(unittest.TestCase):
         config = SwarmConfig(number_of_particles=5, size=6, lower_bound=1, upper_bound=10)
         swarm = Swarm(config)
 
-        swarm.add_particle(np.ones(6))
+        swarm.add_best_particle(np.ones(6))
 
         self.assertTrue(np.all(swarm.particle_position(5) == 1.))
+        self.assertEqual(swarm.best_particle_index(), 5)
 
         with self.assertRaises(ValueError):
-            swarm.add_particle(np.zeros(6))
+            swarm.add_best_particle(np.zeros(6))
 
     def test_convergence_between_generations(self):
         config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
@@ -77,7 +77,7 @@ class SwarmTestCase(unittest.TestCase):
         first_fitness = swarm.best_swarm_fitness()
 
         second_generation_swarm = Swarm(config)
-        second_generation_swarm.add_particle(swarm.best_position())
+        second_generation_swarm.add_best_particle(swarm.best_position(), first_fitness)
 
         second_generation_swarm.fly(30, fitness.evaluate)
 
