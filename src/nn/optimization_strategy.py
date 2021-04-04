@@ -5,6 +5,7 @@ import numpy as np
 from nn.fitness import MlpFitness
 from nn.mlp import MLP, mlp_shape_dimension
 from pso.multi_swarm import OptimizationStrategy, MultiParticle
+from pso.speed import ConvergingSpeedCalculator
 from pso.swarm import Swarm, SwarmConfig
 
 
@@ -54,7 +55,7 @@ class MlpStrategy(OptimizationStrategy):
             lower_bound=self.inner_config.lower_bound,
             upper_bound=self.inner_config.upper_bound
         )
-        return Swarm(config)
+        return Swarm(config, ConvergingSpeedCalculator())
 
     def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) -> \
             Callable[[int, np.ndarray], float]:

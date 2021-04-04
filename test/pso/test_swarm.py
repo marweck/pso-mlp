@@ -3,6 +3,8 @@ from unittest.mock import patch
 
 import sys
 import numpy as np
+
+from pso.speed import ConvergingSpeedCalculator
 from pso.swarm import Swarm, SwarmConfig
 
 
@@ -85,6 +87,26 @@ class SwarmTestCase(unittest.TestCase):
 
         print('first fitness: {}  second fitness: {}'.format(first_fitness, second_fitness))
         self.assertTrue(second_fitness <= first_fitness)
+
+    def test_swarm_with_guaranteed_convergence(self):
+        config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
+        swarm = Swarm(config, ConvergingSpeedCalculator())
+
+        solution = np.random.uniform(size=10)
+        fitness = Fitness(solution)
+        previous_best = sys.maxsize
+
+        for i in range(10):
+            swarm.fly(3, fitness.evaluate)
+            print(swarm.best_position())
+            best_swarm_fitness = swarm.best_swarm_fitness()
+            print('best fitness so far: {:.5f}'.format(best_swarm_fitness))
+
+            self.assertTrue(best_swarm_fitness <= previous_best)
+            previous_best = best_swarm_fitness
+
+        best_index = swarm.best_particle_index()
+        self.assertTrue(np.all(swarm.best_position() == swarm.particle_position(best_index)))
 
 
 class Fitness:

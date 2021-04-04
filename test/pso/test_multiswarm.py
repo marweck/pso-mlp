@@ -5,6 +5,7 @@ import numpy as np
 import sys
 
 from pso.multi_swarm import MultiSwarm, OptimizationStrategy, MultiParticle
+from pso.speed import ConvergingSpeedCalculator
 from pso.swarm import Swarm, SwarmConfig
 from util.plotting import plot_fitness
 
@@ -62,7 +63,7 @@ class SimpleStrategy(OptimizationStrategy):
 
     def create_inner_swarm(self, outer_position: np.ndarray) -> Swarm:
         config = SwarmConfig(number_of_particles=15, size=12, lower_bound=-1, upper_bound=1)
-        return Swarm(config)
+        return Swarm(config, ConvergingSpeedCalculator())
 
     def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) \
             -> Callable[[int, np.ndarray], float]:
