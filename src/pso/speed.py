@@ -103,4 +103,5 @@ class ConvergingSpeedCalculator(SpeedCalculator):
             )
         else:
             r1 = np.random.uniform(size=config.particle_size)
-            return best_particle_position - position + CHI * speed + self.__rho * (1 - 2 * r1)
+            new_speed = best_particle_position - position + CHI * speed + self.__rho * (1 - 2 * r1)
+            return np.clip(new_speed, a_min=-config.upper_bound, a_max=config.upper_bound)
