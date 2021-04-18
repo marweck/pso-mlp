@@ -51,7 +51,7 @@ class MlpStrategy(OptimizationStrategy):
         number_of_weights = self.__inner_swarm_dimension_for_outer_particle(outer_position)
         config = SwarmConfig(
             number_of_particles=self.inner_config.number_of_particles,
-            size=number_of_weights,
+            particle_size=number_of_weights,
             lower_bound=self.inner_config.lower_bound,
             upper_bound=self.inner_config.upper_bound
         )

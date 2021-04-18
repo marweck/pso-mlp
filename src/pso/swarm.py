@@ -1,4 +1,5 @@
 from typing import Callable, List
+from dataclasses import replace
 
 import numpy as np
 import sys
@@ -88,7 +89,8 @@ class Swarm:
         self.__best_fitness = np.hstack([self.__best_fitness, fitness])
 
         self.__best_particle_index = self.__swarm_config.number_of_particles
-        self.__swarm_config.number_of_particles += 1
+        self.__swarm_config = replace(self.__swarm_config,
+                                      number_of_particles=self.__swarm_config.number_of_particles + 1)
 
     def particle_position(self, particle_index: int) -> np.ndarray:
         return self.__swarm_position[particle_index]

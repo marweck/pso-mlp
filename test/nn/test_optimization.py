@@ -12,7 +12,7 @@ from util.plotting import plot_fitness
 class MlpStrategyTestCase(unittest.TestCase):
 
     def test_mlp_strategy_creation(self):
-        swarm_config = SwarmConfig(number_of_particles=20, size=30, lower_bound=-0.5, upper_bound=0.5)
+        swarm_config = SwarmConfig(number_of_particles=20, particle_size=30, lower_bound=-0.5, upper_bound=0.5)
         x_training = np.random.uniform(size=(20, 7))
         y_training = np.random.uniform(size=(20, 2))
         x_validation = np.random.uniform(size=(10, 7))
@@ -35,7 +35,7 @@ class MlpStrategyTestCase(unittest.TestCase):
         self.assertIs(strategy.number_of_outputs, 2)
 
     def test_create_inner_swarm(self):
-        swarm_config = SwarmConfig(number_of_particles=20, size=30, lower_bound=-0.5, upper_bound=0.5)
+        swarm_config = SwarmConfig(number_of_particles=20, particle_size=30, lower_bound=-0.5, upper_bound=0.5)
         x_training = np.random.uniform(size=(20, 7))
         y_training = np.random.uniform(size=(20, 2))
         x_validation = np.random.uniform(size=(10, 7))
@@ -59,7 +59,7 @@ class MlpStrategyTestCase(unittest.TestCase):
 
     def test_integrated_optimization(self):
         # initial particle size is whatever because it will vary with the architecture
-        inner_config = SwarmConfig(number_of_particles=10, size=30, lower_bound=-0.5, upper_bound=0.5)
+        inner_config = SwarmConfig(number_of_particles=10, particle_size=30, lower_bound=-0.5, upper_bound=0.5)
         x_training = np.random.uniform(size=(20, 7))
         y_training = np.random.uniform(size=(20, 2))
         x_validation = np.random.uniform(size=(10, 7))
@@ -73,7 +73,7 @@ class MlpStrategyTestCase(unittest.TestCase):
             y_validation=y_validation,
         )
 
-        outer_config = SwarmConfig(number_of_particles=10, size=3, lower_bound=1, upper_bound=12)
+        outer_config = SwarmConfig(number_of_particles=10, particle_size=3, lower_bound=1, upper_bound=12)
 
         swarm = MultiSwarm(outer_config, strategy)
 
@@ -99,7 +99,7 @@ class MlpStrategyTestCase(unittest.TestCase):
         print('Best inner fitness ', second_inner_fitness)
 
     def test_initial_inner_position_for_outer_position(self):
-        inner_config = SwarmConfig(number_of_particles=10, size=30, lower_bound=-0.5, upper_bound=0.5)
+        inner_config = SwarmConfig(number_of_particles=10, particle_size=30, lower_bound=-0.5, upper_bound=0.5)
         x_training = np.random.uniform(size=(20, 7))
         y_training = np.random.uniform(size=(20, 2))
         x_validation = np.random.uniform(size=(10, 7))
@@ -117,7 +117,7 @@ class MlpStrategyTestCase(unittest.TestCase):
         self.assertEqual(len(initial_position), 33)
 
     def test_best_inner_position_for_outer_particle(self):
-        inner_config = SwarmConfig(number_of_particles=10, size=30, lower_bound=-0.5, upper_bound=0.5)
+        inner_config = SwarmConfig(number_of_particles=10, particle_size=30, lower_bound=-0.5, upper_bound=0.5)
         x_training = np.random.uniform(size=(20, 7))
         y_training = np.random.uniform(size=(20, 2))
         x_validation = np.random.uniform(size=(10, 7))

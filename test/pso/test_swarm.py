@@ -13,7 +13,7 @@ class SwarmTestCase(unittest.TestCase):
     @patch('pso.swarm.np.random.uniform')
     def test_create_swarm(self, uniform_patch):
         uniform_patch.return_value = np.zeros((20, 50))
-        config = SwarmConfig(number_of_particles=20, size=50, lower_bound=-0.5, upper_bound=0.5)
+        config = SwarmConfig(number_of_particles=20, particle_size=50, lower_bound=-0.5, upper_bound=0.5)
         swarm = Swarm(config)
 
         best_fitness = swarm.best_swarm_fitness()
@@ -22,7 +22,7 @@ class SwarmTestCase(unittest.TestCase):
         self.assertTrue(np.all(swarm.best_position() == 0))
 
     def test_swarm_convergence(self):
-        config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
+        config = SwarmConfig(number_of_particles=20, particle_size=10, lower_bound=-1, upper_bound=1)
         swarm = Swarm(config)
 
         solution = np.random.uniform(size=10)
@@ -42,7 +42,7 @@ class SwarmTestCase(unittest.TestCase):
         self.assertTrue(np.all(swarm.best_position() == swarm.particle_position(best_index)))
 
     def test_non_negative_particle_swarm(self):
-        config = SwarmConfig(number_of_particles=20, size=6, lower_bound=1, upper_bound=16)
+        config = SwarmConfig(number_of_particles=20, particle_size=6, lower_bound=1, upper_bound=16)
         swarm = Swarm(config)
         solution = np.random.uniform(size=6, low=5, high=9)
         fitness = Fitness(solution)
@@ -57,7 +57,7 @@ class SwarmTestCase(unittest.TestCase):
         self.assertTrue(np.all(best >= 1) and np.all(best <= 16))
 
     def test_add_particle(self):
-        config = SwarmConfig(number_of_particles=5, size=6, lower_bound=1, upper_bound=10)
+        config = SwarmConfig(number_of_particles=5, particle_size=6, lower_bound=1, upper_bound=10)
         swarm = Swarm(config)
 
         swarm.add_best_particle(np.ones(6))
@@ -69,7 +69,7 @@ class SwarmTestCase(unittest.TestCase):
             swarm.add_best_particle(np.zeros(6))
 
     def test_convergence_between_generations(self):
-        config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
+        config = SwarmConfig(number_of_particles=20, particle_size=10, lower_bound=-1, upper_bound=1)
         swarm = Swarm(config)
 
         solution = np.random.uniform(size=10)
@@ -89,7 +89,7 @@ class SwarmTestCase(unittest.TestCase):
         self.assertTrue(second_fitness <= first_fitness)
 
     def test_swarm_with_guaranteed_convergence(self):
-        config = SwarmConfig(number_of_particles=20, size=10, lower_bound=-1, upper_bound=1)
+        config = SwarmConfig(number_of_particles=20, particle_size=10, lower_bound=-1, upper_bound=1)
         swarm = Swarm(config, ConvergingSpeedCalculator())
 
         solution = np.random.uniform(size=10)

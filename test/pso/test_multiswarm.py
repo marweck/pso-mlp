@@ -14,7 +14,7 @@ class MultiSwarmTestCase(unittest.TestCase):
 
     def test_multi_swarm_creation(self):
         strategy = SimpleStrategy()
-        config = SwarmConfig(number_of_particles=5, size=1, lower_bound=1, upper_bound=5)
+        config = SwarmConfig(number_of_particles=5, particle_size=1, lower_bound=1, upper_bound=5)
         multi_swarm = MultiSwarm(outer_swarm_config=config, strategy=strategy)
 
         self.assertTrue(multi_swarm.best_outer_fitness() == sys.maxsize)
@@ -25,7 +25,7 @@ class MultiSwarmTestCase(unittest.TestCase):
 
     def test_multi_swarm_convergence(self):
         strategy = SimpleStrategy()
-        config = SwarmConfig(number_of_particles=5, size=1, lower_bound=1, upper_bound=5)
+        config = SwarmConfig(number_of_particles=5, particle_size=1, lower_bound=1, upper_bound=5)
         multi_swarm = MultiSwarm(outer_swarm_config=config, strategy=strategy)
 
         previous_best = sys.maxsize
@@ -62,7 +62,7 @@ class SimpleStrategy(OptimizationStrategy):
         return best_so_far.inner_position
 
     def create_inner_swarm(self, outer_position: np.ndarray) -> Swarm:
-        config = SwarmConfig(number_of_particles=15, size=12, lower_bound=-1, upper_bound=1)
+        config = SwarmConfig(number_of_particles=15, particle_size=12, lower_bound=-1, upper_bound=1)
         return Swarm(config, ConvergingSpeedCalculator())
 
     def inner_swarm_evaluator(self, outer_swarm_position_i: np.ndarray) \

@@ -15,9 +15,9 @@ class MlpFitnessTestCase(unittest.TestCase):
 
         fitness = MlpFitness(mlp, x_input, y_output)
 
-        self.assertIs(fitness.mlp, mlp)
-        self.assertIs(fitness.x_input, x_input)
-        self.assertIs(fitness.y_output, y_output)
+        self.assertIs(fitness.__dict__['_MlpFitness__mlp'], mlp)
+        self.assertIs(fitness.__dict__['_MlpFitness__x_input'], x_input)
+        self.assertIs(fitness.__dict__['_MlpFitness__y_output'], y_output)
 
     def test_mlp_fitness_evaluation(self):
         mlp = MLP((3, 7, 2))
